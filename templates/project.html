@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width,initial-scale=1" name="viewport">
+  <meta content="description" name="description">
+  <meta name="google" content="notranslate" />
+  <meta content="Mashup templates have been developed by Orson.io team" name="author">
+
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="./static/assets/apple-icon-180x180.png">
+  <link href="./static/assets/favicon.ico" rel="icon">
+
+  <title>Project</title>
+
+  <link href="./static/main.3f6952e4.css" rel="stylesheet">
+
+  <style>
+    .input-container {
+      margin-bottom: 20px;
+    }
+
+    .input-container label {
+      font-weight: bold;
+    }
+
+    .submit-button {
+      margin-top: 20px;
+    }
+
+    .result-container {
+      margin-top: 20px;
+      font-size: 1.5em;
+      padding: 20px;
+      border: 2px solid #007bff;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body class="">
+<div id="site-border-left"></div>
+<div id="site-border-right"></div>
+<div id="site-border-top"></div>
+<div id="site-border-bottom"></div>
+ <!-- Add your content of header -->
+<header>
+  <nav class="navbar  navbar-fixed-top navbar-default">
+    <div class="container">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav ">
+          <li><a href="./index.html" title="">01 : Home</a></li>
+          <li><a href="./about.html" title="">02 : About Project</a></li>
+          <li><a href="./project.html" title="">03 : Project</a></li>
+          <li><a href="./contact.html" title="">04 : Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="section-container">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="section-container-spacer text-center">
+            <h1 class="h2">Project</h1>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <form id="newsForm" enctype="multipart/form-data">
+                <div class="input-container">
+                  <label for="inputType">Select Input Type:</label>
+                  <select id="inputType" class="form-control">
+                    <option value="text">Text Input</option>
+                    <option value="image">Image Input</option>
+                  </select>
+                </div>
+
+                <div id="textInput" class="input-container">
+                  <label for="text">Enter Text:</label>
+                  <input type="text" id="text" name="news_text" class="form-control" placeholder="Enter your text here">
+                </div>
+
+                <div id="imageInput" class="input-container" style="display: none;">
+                  <label for="image">Upload Image:</label>
+                  <input type="file" id="image" name="file" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary submit-button">Submit</button>
+              </form>
+
+              <div id="result" class="result-container"></div>
+            </div>
+          </div>
+       </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function (event) {
+    document.getElementById("inputType").addEventListener("change", function () {
+      var selectedInput = this.value;
+      document.getElementById("textInput").style.display = "none";
+      document.getElementById("imageInput").style.display = "none";
+
+      if (selectedInput === "text") {
+        document.getElementById("textInput").style.display = "block";
+      } else if (selectedInput === "image") {
+        document.getElementById("imageInput").style.display = "block";
+      }
+    });
+
+    document.getElementById("newsForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      var selectedInput = document.getElementById("inputType").value;
+      var formData = new FormData(this);
+
+      var url = selectedInput === 'image' ? '/predict_image' : '/predict';
+
+      fetch(url, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data); // Log the response
+        document.getElementById("result").innerText = data.prediction || data.error;
+        document.getElementById("text").value = ''; // Clear the text area
+        document.getElementById("image").value = ''; // Clear the file input
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById("result").innerText = 'An error occurred. Please try again.';
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
